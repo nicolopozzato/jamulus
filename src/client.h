@@ -438,5 +438,6 @@ signals:
 
     void Disconnected();
     void ControllerInFaderLevel ( int iChannelIdx, int iValue );
+    void ControllerInButtonMute ( int iChannelIdx );
     void CentralServerAddressTypeChanged();
 };

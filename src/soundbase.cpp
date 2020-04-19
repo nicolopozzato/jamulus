@@ -251,6 +251,10 @@ QVector<QString> CSoundBase::LoadAndInitializeFirstValidDriver()
 \******************************************************************************/
 void CSoundBase::ParseMIDIMessage ( const CVector<uint8_t>& vMIDIPaketBytes )
 {
+
+    // 1-10 MAIN INPUT
+    // 11+  CHANNEL  (11 Fader - 12 Mute - 13 Solo)
+
     if ( vMIDIPaketBytes.Size() > 0 )
     {
         const uint8_t iStatusByte = vMIDIPaketBytes[0];
@@ -273,7 +277,7 @@ printf ( "\n" );
 
             // per definition if MIDI channel is 0, we listen to all channels
             // note that iCtrlMIDIChannel is one-based channel number
-            if ( ( iCtrlMIDIChannel == 0 ) || ( iCtrlMIDIChannel - 1 == iMIDIChannelZB ) )
+            if ( ( iCtrlMIDIChannel == 0 ) || ( iCtrlMIDIChannel - 1 == iMIDIChannelZB ) ) //from 1-16 to 0-15
             {
                 // we only want to parse controller messages
                 if ( ( iStatusByte >= 0xB0 ) && ( iStatusByte < 0xC0 ) )
@@ -281,15 +285,52 @@ printf ( "\n" );
                     // make sure paket is long enough
                     if ( vMIDIPaketBytes.Size() > 2 )
                     {
-                        // we are assuming that the controller number is the same
-                        // as the audio fader index and the range is 0-127
-                        const int iFaderLevel = static_cast<int> ( static_cast<double> (
-                            qMin ( vMIDIPaketBytes[2], uint8_t ( 127 ) ) ) / 127 * AUD_MIX_FADER_MAX );
+                        // Check if local control or channel
+                        if (vMIDIPaketBytes[1]<=10) {
+                            // LOCAL CONTROL
+                            switch (vMIDIPaketBytes[1])
+                            {
+                            case 1:
+                                /* Mute Stream */
+                                break;
+                            
+                            default:
+                                break;
+                            }
 
-                        // Behringer X-TOUCH: offset of 0x46
-                        const int iChID = vMIDIPaketBytes[1] - 70;
+                        } else {
+                            // CHANNEL CONTROL
+                            // 11+  CHANNEL  (11 Fader - 12 Mute - 13 Solo)
+                            //                  1           2         0
 
-                        EmitControllerInFaderLevel ( iChID, iFaderLevel );
+                            int iChID = (vMIDIPaketBytes[1]-10) / 3;  //Jamulus Channel
+                            int iElement = (vMIDIPaketBytes[1]-10) & 3; // Element of that channel (1 Fader, 2 Mute, 0 Solo)
+                            int iFaderLevel = 0;
+                            switch (iElement)
+                            {
+                            case 1:
+                                /* Fader */
+                                iFaderLevel = static_cast<int> ( static_cast<double> (
+                                    qMin ( vMIDIPaketBytes[2], uint8_t ( 127 ) ) ) / 127 * AUD_MIX_FADER_MAX );
+
+                                EmitControllerInFaderLevel ( iChID, iFaderLevel );
+                                break;
+                            
+                            case 2:
+                                /* Mute Button */
+                                EmitControllerInButtonMute ( iChID );
+
+                                break;
+
+                            case 0:
+                                /* Solo Button */
+                                
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
                     }
                 }
             }

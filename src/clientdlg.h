@@ -135,6 +135,8 @@ public slots:
                                     const int iValue ) { MainMixerBoard->SetFaderLevel ( iChannelIdx,
                                                                                          iValue ); }
 
+    void OnControllerInButtonMute ( const int iChannelIdx ) { MainMixerBoard->SetButtonMute ( iChannelIdx ); }
+
 #ifdef ENABLE_CLIENT_VERSION_AND_OS_DEBUGGING
     void OnCLVersionAndOSReceived ( CHostAddress           InetAddr,
                                     COSUtil::EOpSystemType eOSType,

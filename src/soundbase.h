@@ -91,6 +91,8 @@ public:
 
     void EmitControllerInFaderLevel ( const int iChannelIdx,
                                       const int iValue ) { emit ControllerInFaderLevel ( iChannelIdx, iValue ); }
+    
+    void EmitControllerInButtonMute ( const int iChannelIdx) { emit ControllerInButtonMute ( iChannelIdx ); }
 
 protected:
     // driver handling
@@ -131,5 +133,6 @@ protected:
 
 signals:
     void ReinitRequest ( int iSndCrdResetType );
-    void ControllerInFaderLevel ( int iChannelIdx, int iValue );
+    void ControllerInFaderLevel ( int iChannelIdx, int iValue ); 
+    void ControllerInButtonMute ( int iChannelIdx );
 };

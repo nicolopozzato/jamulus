@@ -493,6 +493,10 @@ CClientDlg::CClientDlg ( CClient*        pNCliP,
         this, SLOT ( OnControllerInFaderLevel ( int, int ) ) );
 
     QObject::connect ( pClient,
+        SIGNAL ( ControllerInButtonMute ( int ) ),
+        this, SLOT ( OnControllerInButtonMute ( int ) ) );
+
+    QObject::connect ( pClient,
         SIGNAL ( CLChannelLevelListReceived ( CHostAddress, CVector<uint16_t> ) ),
         this, SLOT ( OnCLChannelLevelListReceived ( CHostAddress, CVector<uint16_t> ) ) );
 

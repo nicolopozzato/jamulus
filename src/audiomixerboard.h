@@ -141,7 +141,8 @@ public:
 
     void SetFaderLevel ( const int iChannelIdx,
                          const int iValue );
-
+    void SetButtonMute ( const int iChannelIdx);
+    
     void SetChannelLevels ( const CVector<uint16_t>& vecChannelLevel );
 
     // settings

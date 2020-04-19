@@ -195,6 +195,10 @@ CClient::CClient ( const quint16  iPortNumber,
         SIGNAL ( ControllerInFaderLevel ( int, int ) ),
         SIGNAL ( ControllerInFaderLevel ( int, int ) ) );
 
+    QObject::connect ( &Sound,
+        SIGNAL ( ControllerInButtonMute ( int ) ),
+        SIGNAL ( ControllerInButtonMute ( int ) ) );
+
     QObject::connect ( &Socket, SIGNAL ( InvalidPacketReceived ( CHostAddress ) ),
         this, SLOT ( OnInvalidPacketReceived ( CHostAddress ) ) );
 
